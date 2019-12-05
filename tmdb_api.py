@@ -3,7 +3,7 @@ import json
 import requests
 import os
 
-def get_api_data():
+def get_api_data_popular():
     # Get 20 most popular movies from TMDB
     api_key = 'b45e2b59312812bca0659be8b753a532'
     baseurl= "https://api.themoviedb.org/3/movie/popular?api_key={}&language=en-US&page={}"
@@ -17,7 +17,6 @@ def get_api_data():
         data = json.loads(r.text)
         results = data["results"]
         popular_list = popular_list + results
-    
     return popular_list
 
 def create_cache(pop_results):
@@ -33,8 +32,8 @@ def create_cache(pop_results):
         json.dump(movie_results, outfile, indent = 2)
 
 class TestAllMethods(unittest.TestCase):
-    def test_get_api_data(self):
-        results_dict = get_api_data()
+    def test_get_api_data_popular(self):
+        results_dict = get_api_data_popular()
         self.assertEqual(len(results_dict), 100) # Testing if 100 movies are added
         self.assertFalse(results_dict[0] == results_dict[20]) # Testing if unique pages were returned
 
