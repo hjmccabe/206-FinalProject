@@ -15,7 +15,13 @@ def tmdb_api():
 
 class TestAllMethods(unittest.TestCase):
     pass
+    def test_omdb_api():
+        pass
+    def test_itunes_api():
+        pass
 
+    def test_tmdb_api():
+        pass
 def main():
     pass
 
