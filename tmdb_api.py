@@ -38,7 +38,7 @@ class TestAllMethods(unittest.TestCase):
         self.assertFalse(results_dict[0] == results_dict[20]) # Testing if unique pages were returned
 
 def main():
-    results = get_api_data()
+    results = get_api_data_popular()
     create_cache(results)
 
 if __name__ == "__main__":
