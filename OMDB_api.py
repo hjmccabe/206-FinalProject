@@ -2,22 +2,44 @@ import unittest
 import json
 import requests
 import os
+
+def get_popular_movie_titles():
+    titles = []
+    full_path = os.path.join(os.path.dirname(__file__), "popular_movies.json")
+    f = open(full_path)
+    file_data = f.read()
+    f.close()
+    popular_movies = json.loads(file_data)
+
+    for movie in popular_movies["results"]:
+        print(movie)
+        title = movie["title"]
+        titles.append(title)
+
+    return titles
+
+    
+
 def get_api_data_all():
     # Get 20 most popular movies from TMDB
     api_key = '975f8068'
-    baseurl= "http://www.omdbapi.com/?i=tt3896198&apikey={}&page={}"
+    baseurl= "http://www.omdbapi.com/?t={}&apikey={}"
     title_list = []
     bor_list = []
 
     # Each fetch returns 1 movie per page
     #want 20 movies
-    for page in range(1,21):
-        ratings_url = baseurl.format(api_key, page)
+
+    popular_movie_titles = get_popular_movie_titles()
+    print(popular_movie_titles)
+
+    for title in popular_movie_titles: 
+        ratings_url = baseurl.format(title, api_key)
         r = requests.get(ratings_url)
         data = json.loads(r.text)
-        ratings = data["Ratings"]
-        boxoffice = data["BoxOffice"]
-        moviename = data["Title"]
+        ratings = data.get("Ratings")
+        boxoffice = data.get("BoxOffice")
+        moviename = data.get("Title")
         title_list.append(moviename)
         bor_list.append((ratings, boxoffice))
     print(bor_list)
@@ -50,7 +72,8 @@ def create_cache():
 #         self.assertFalse(results_dict[0] == results_dict[20]) # Testing if unique pages were returned
 
 def main():
-    create_cache()
+    get_api_data_all()
+    # create_cache()
 
 if __name__ == "__main__":
     main()
