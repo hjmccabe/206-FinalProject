@@ -21,10 +21,9 @@ def get_movies_dict(db_filename):
     ON Popularity.title = OMDB.title;''')
     count = 0
     for var in list(cur):
-        print(var)
         newsdir = ''
         
-        if var[1] != None and var[1] != '': #MODIFY IF WE FIX THE DATABASE ISSUE!!!!!!!
+        if var[1] != None and var[1] != '' and var[1] != 'N/A': #MODIFY IF WE FIX THE DATABASE ISSUE!!!!!!!
             count += 1
             director = var[1] #got director
             adir = director.replace("(co-director)", '')
