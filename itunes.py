@@ -5,10 +5,44 @@ import json
 import requests
 import os
 
-def get_api_data_popular():
-    # Get 20 most popular movies from TMDB
-    baseurl= "https://itunes.apple.com/search?attribute={}&limit=20"
-    popular_list = []
+def movie_titles(filename):
+    # Get same movies from OMDB
+    titlelst1 = []
+    titlelst = []
+    
+    with open(filename, "r") as f:
+        z = f.loads()
+    for info in z['results']:
+        titlelst1.append(info['title'])
+    for titleconvert in titlelst1:
+        title= titleconvert.replace(" ", "+")
+        titlelst.append(title)
+    return titlelst
+
+def movie_get(titlelst):
+    baseurl= "https://itunes.apple.com/search?term={}&country=US&entity=movie&limit=20"
+    movie_list = []
+    for ntitle in titlelst[:1]: #TESTING WITH 2 ITEMS
+        url = baseurl.format(ntitle)
+        itunesr = requests.get(url)
+        data = json.loads(itunesr.text)
+        movie_list = movie_list + data
+    print(movie_list)
+    return movie_list
+
+
+
+
+
+
+
+    
+
+    
+#
+#get the title first and turn it into name+name format
+#write these parameters into the cache file one at a time
+
 
 #     # Each fetch returns 20 movies on a page
 #     # This iterates 5 times to return 100 movies
@@ -20,7 +54,7 @@ def get_api_data_popular():
 #         popular_list = popular_list + results
 #     return popular_list
 
-# def create_cache(pop_results):
+
 #     # Cache was created on 12/4/19 at 9:15 PM
 
 #     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -38,9 +72,11 @@ def get_api_data_popular():
 #         self.assertEqual(len(results_dict), 100) # Testing if 100 movies are added
 #         self.assertFalse(results_dict[0] == results_dict[20]) # Testing if unique pages were returned
 
-# def main():
-#     results = get_api_data_popular() 
-#     create_cache(results)
+def main():
+    filename = "popular_movies.json"
+    results = movie_titles(filename) 
+    mlst = movie_get(results)
+    #create_cache(mlst)
 
 # if __name__ == "__main__":
 #     main()
