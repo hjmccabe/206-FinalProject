@@ -30,7 +30,7 @@ def get_movies_dict(db_filename):
             newsdir = newsdir + director
             released = var[0] #got release date
             drdictionary[title] = (newsdir, released)
-    print(count)
+    print(drdictionary)
     conn.close()
     return drdictionary
   #PROBLEM: return 77 items in dictionary, seems we should get 88
