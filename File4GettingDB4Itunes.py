@@ -36,7 +36,7 @@ def get_movies_dict(db_filename):
     print(len(drdictionary.items()))
     
     conn.close()
-    # return dictionary
+    return drdictionary
   
 
 def main():
