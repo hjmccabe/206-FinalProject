@@ -5,14 +5,14 @@ import os
 import sqlite3
 
 def get_api_data_popular():
-    # Get 20 most popular movies from TMDB
+    # Get 120 most popular movies from TMDB
     api_key = 'b45e2b59312812bca0659be8b753a532'
     baseurl= "https://api.themoviedb.org/3/movie/popular?api_key={}&language=en-US&page={}"
     popular_list = []
 
     # Each fetch returns 20 movies on a page
-    # This iterates 5 times to return 100 movies
-    for num in range(1,6):
+    # This iterates 6 times to return 120 movies
+    for num in range(1,7):
         popular_url = baseurl.format(api_key, num)
         r = requests.get(popular_url)
         data = json.loads(r.text)
@@ -73,7 +73,7 @@ class TestAllMethods(unittest.TestCase):
 
     def load_from_cache(self):
         tmdb_cache = load_from_cache()
-        self.assertEqual(len(tmdb_cache), 100)
+        self.assertEqual(len(tmdb_cache), 120)
         self.assertEqual(tmdb_cache[0]['title'], "Frozen II")
 
 def main():
