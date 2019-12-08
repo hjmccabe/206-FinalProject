@@ -33,7 +33,6 @@ def get_movies_dict(db_filename):
     print(drdictionary)
     conn.close()
     return drdictionary
-  #PROBLEM: return 77 items in dictionary, seems we should get 88
 
 def main():
     filename = "movies.db"
