@@ -15,25 +15,22 @@ def get_movies_dict(db_filename):
     drdictionary = {}
     conn = sqlite3.connect(path+'/'+db_filename)
     cur = conn.cursor()
-    cur.execute('''SELECT Popularity.release_date, OMDB.director
+    cur.execute('''SELECT Popularity.release_date, OMDB.director, OMDB.title
     FROM Popularity
     LEFT JOIN OMDB
     ON Popularity.title = OMDB.title;''')
     count = 0
     for var in list(cur):
+        count+=1
         newsdir = ''
-        
         if var[1] != None and var[1] != '' and var[1] != 'N/A': #MODIFY IF WE FIX THE DATABASE ISSUE!!!!!!!
-            count += 1
+            title = var[2]
             director = var[1] #got director
-            adir = director.replace("(co-director)", '')
-            adir2 = adir.strip(' ')
-            newsdir = newsdir + adir2
+            director = director.strip(' ').split(',')[0].strip(' ')
+            newsdir = newsdir + director
             released = var[0] #got release date
-            drdictionary[newsdir] = released
+            drdictionary[title] = (newsdir, released)
     print(count)
-    print(len(drdictionary.items()))
-    
     conn.close()
     return drdictionary
   #PROBLEM: return 77 items in dictionary, seems we should get 88
@@ -49,4 +46,4 @@ if __name__ == "__main__":
     #('2017-12-13', 'N/A')
     #('2019-05-24', 'Chris Renaud, Jonathan del Val(co-director)')
 #OTHER TEST CASES:
-    #len(movies in dictionary from get_movies_dict) == 88
+    #len(movies in dictionary from get_movies_dict) == 99
