@@ -19,7 +19,9 @@ def get_movies_dict(db_filename):
     FROM Popularity
     LEFT JOIN OMDB
     ON Popularity.title = OMDB.title;''')
+    count = 0
     for var in list(cur):
+        count+=1
         newsdir = ''
         if var[1] != None and var[1] != '' and var[1] != 'N/A': #MODIFY IF WE FIX THE DATABASE ISSUE!!!!!!!
             title = var[2]
@@ -28,7 +30,7 @@ def get_movies_dict(db_filename):
             newsdir = newsdir + director
             released = var[0] #got release date
             drdictionary[title] = (newsdir, released)
-    
+    print(count)
     conn.close()
     return drdictionary
   #PROBLEM: return 77 items in dictionary, seems we should get 88
@@ -44,4 +46,4 @@ if __name__ == "__main__":
     #('2017-12-13', 'N/A')
     #('2019-05-24', 'Chris Renaud, Jonathan del Val(co-director)')
 #OTHER TEST CASES:
-    #len(movies in dictionary from get_movies_dict) == 86
+    #len(movies in dictionary from get_movies_dict) == 99
