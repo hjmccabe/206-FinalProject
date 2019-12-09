@@ -3,6 +3,7 @@ import json
 import requests
 import os
 import sqlite3
+import plotly.express as px
 
 def get_popular_movie_titles():
     titles = []
@@ -97,7 +98,10 @@ def add_to_database(movie_info, cur, conn):
             cur.execute("INSERT INTO OMDB (title, box_office, director, rotten_tomatoes) VALUES (?,?,?,?)",(movie[0], movie[1], movie[2], movie[3]))
             conn.commit()
     
+def make_visualizations(db_name):
 
+    #fig = px.scatter(x=[0, 1, 2, 3, 4], y=[0, 1, 4, 9, 16])
+    fig.show()
 '''
 def create_cache():
     # Cache was created on 12/4/19 at 11:58 PM
@@ -132,6 +136,7 @@ def main():
     movie_info_cache = open_cache()
     cur, conn = setUpDatabase("movies.db")
     add_to_database(movie_info_cache, cur, conn)
+    make_visualizations("movies.db")
 
     # create_cache()
 
