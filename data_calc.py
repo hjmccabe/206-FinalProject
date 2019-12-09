@@ -248,7 +248,7 @@ def make_visualizations(file):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     file_ = dir_path + '/' + "calculations.txt"
     with open (file_, 'r') as infile:
-        something = infile.readlines()#[31:]
+        something = infile.readlines()[46:]
     for line in something: 
         if num in range(len(something) - 1) and line == something[num]:
             num+=1
