@@ -4,16 +4,22 @@ import sqlite3
 import matplotlib.pyplot as mpl
 
 def popularity_by_year(f):
+    
+    results = []
     # Opening cache
     dir_path = os.path.dirname(os.path.realpath(__file__))
     cache_file = dir_path + '/' + "popular_movies.json"
     with open (cache_file, 'r') as infile:
         st = infile.read()
         dic = json.loads(st)
-        results = dic.get("results")
+    
+        for page in range(1,9):
+            key = "Page " + str(page)
+            page_results = dic.get(key)
+            results = results + page_results
     
     # Getting average popularity
-    total_popularity = {}
+    total_popularity = {}   
     total_movies = len(results)
 
     for movie in results:
