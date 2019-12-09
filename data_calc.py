@@ -243,6 +243,7 @@ def boxoffice_by_rating(f):
 def make_visualizations(file):
     rtrating = []
     bins = []
+    bolst = []
     count = -20
     num = 3
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -257,17 +258,42 @@ def make_visualizations(file):
             bins.append(count)
             l = line.split(',')
             rtrating.append(int(l[1]))
-    bins.append(100)
-    mpl.hist(rtrating, bins, histtype='bar', rwidth=0.8)
-    mpl.xticks(rotation=90)
-    mpl.tight_layout()
-    mpl.title("Average Boxoffice Price per Rating Category")
-    mpl.xlabel("rating category")
-    mpl.ylabel("number of movies category")
-    fig, ax = mpl.subplots()
+            bolst.append(int(l[-1]))
+    count+=20
+    bins.append(count)
+
+    # get the figure
+    fig = mpl.figure()
+
+    ax1 = fig.add_subplot(111)
+    ax1.plot(bins, rtrating, 'g-', label="rating category")
+    ax1.set_title("Number of Movies per Rotten Tomato Category")
+    ax1.grid()
+    ax1.set_ylim(0, 40)
+    ax1.set_yaxis("Number of movies")
+    # save the figure
     fig.savefig("omdbhist.png")
     mpl.show()
-    mpl.legend()
+    # plot the box office data (add line)
+    ax2 = fig.add_subplot(111)
+    ax2.plot(bins, bolst, 'y-', label="rating category")
+    ax2.set_title("Average Boxoffice Price per Rotten Tomatoe Rating Category")
+    ax2.grid()
+    ax2.set_ylim(100000, 453865219)
+    ax1.set_yaxis("box office movie average")
+    fig.savefig("omdbhist2.png")
+    mpl.show()
+
+    # mpl.hist(rtrating, bins, histtype='bar', rwidth=0.8)
+    # mpl.xticks(rotation=90)
+    # mpl.tight_layout()
+    # mpl.title("Average Boxoffice Price per Rating Category")
+    # mpl.xlabel("rating category")
+    # mpl.ylabel("number of movies category")
+    # fig, ax = mpl.subplots()
+    # fig.savefig("omdbhist.png")
+    # mpl.show()
+    # mpl.legend()
 
 
 def main():
