@@ -1,5 +1,5 @@
 Average popularity of movies per year
-Year, number of movies in year, average popularity
+Year, number of movies in year, average popularity, percent of total movies
 2019, 73, 70.56191780821916
 2018, 15, 42.77673333333334
 2014, 13, 35.728923076923074
@@ -28,4 +28,15 @@ Year, number of movies in year, average popularity
 1997, 1, 28.03
 2009, 1, 27.422
 1979, 1, 27.335
+
+Number and percentage of movies by decade
+Decade, number of movies in decade, percent of total popular movies
+2019, 73, 45.62
+2010-2018, 59, 36.88
+2000s, 11, 6.88
+1990s, 10, 6.25
+1970s, 3, 1.88
+2020s, 1, 0.62
+1980s, 2, 1.25
+1960s, 1, 0.62
 
