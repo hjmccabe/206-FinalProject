@@ -246,31 +246,33 @@ def boxoffice_by_rating(f):
         f.write(entry5)
     f.write('\n')
 
-def make_visualizations(file):
+def make_visualizations():
     rtrating = []
     bins = []
     bolst = []
-    count = -20
-    num = 3
+    count = 100
     dir_path = os.path.dirname(os.path.realpath(__file__))
     file_ = dir_path + '/' + "calculations.txt"
     with open (file_, 'r') as infile:
-        something = infile.readlines()[46:]
+        something = infile.readlines()[46:53]
 
     print(something)
-    for line in something: 
-        if num in range(len(something) - 1) and line == something[num]:
-            num+=1
+    for line in something[1:]:
+        if line != '\n': 
             line = line.strip('\n')
-            count+=20
             bins.append(count)
+            count-=20
             l = line.split(',')
-            rtrating.append(int(l[1]))
-            bolst.append(int(l[-1]))
-    count+=20
-    bins.append(count)
+            rtrating.append(int(l[1].strip(' ')))
+            if l[0] != '<=20':
+                bolst.append(float(l[-1])//1000000)
+            else:
+                bolst.append(0.0)
+    #count+=20
+    #bins.append(count)
 
     print(bins)
+    print(rtrating)
 
     # get the figure
     fig = mpl.figure()
@@ -281,13 +283,10 @@ def make_visualizations(file):
     ax1.set_xlabel("rating category")
     ax1.set_title("Number of Movies per Rotten Tomato Category")
     ax1.grid()
-    ax1.set_ylim(0, 40)
     ax1.set_ylabel("Number of movies")
     mpl.xticks(rotation=90)
     mpl.tight_layout()
     # save the figure
-    fig.savefig("omdbhist.png")
-    mpl.show()
 
     # plot the box office data (add line)
     ax2 = fig.add_subplot(212)
@@ -295,12 +294,11 @@ def make_visualizations(file):
     ax2.set_title("Average Boxoffice Price per Rotten Tomatoe Rating Category")
     ax2.set_xlabel("rating category")
     ax2.grid()
-    ax2.set_ylim(100000, 453865219)
-    ax2.set_ylabel("box office movie average")
+    ax2.set_ylabel("box office movie average in millions")
     mpl.xticks(rotation=90)
     mpl.tight_layout()
     # save the figure
-    fig.savefig("omdbhist2.png")
+    fig.savefig("omdbhist.png")
     mpl.show()
 
     # Use these to make sure that your x axis labels fit on the page
@@ -321,15 +319,18 @@ def make_visualizations(file):
 
 
 def main():
-    with open("calculations.txt", 'w') as f:
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    file_ = dir_path + '/' + "calculations.txt"
+    with open(file_, 'w') as f:
+        
         sorted_average_popularity = popularity_by_year(f)
-        # popularity_bar_graph(sorted_average_popularity)
+        popularity_bar_graph(sorted_average_popularity)
 
         pop_decade = popularity_by_decade(sorted_average_popularity, f)
         popularity_pie_chart(pop_decade)
 
         boxoffice_by_rating(f)
-        make_visualizations(f)
+    make_visualizations()
 
 
 if __name__ == "__main__":
