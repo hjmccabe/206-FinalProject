@@ -256,6 +256,8 @@ def make_visualizations(file):
     file_ = dir_path + '/' + "calculations.txt"
     with open (file_, 'r') as infile:
         something = infile.readlines()[46:]
+
+    print(something)
     for line in something: 
         if num in range(len(something) - 1) and line == something[num]:
             num+=1
@@ -268,17 +270,19 @@ def make_visualizations(file):
     count+=20
     bins.append(count)
 
+    print(bins)
+
     # get the figure
     fig = mpl.figure()
 
-    ax1 = fig.add_subplot(111)
+    ax1 = fig.add_subplot(211)
     width = 0.69
-    ax1.bar(bins, rtrating, width, align = 'edge', color = 'g-')
+    ax1.bar(bins, rtrating, width, align = 'edge', color = 'g')
     ax1.set_xlabel("rating category")
     ax1.set_title("Number of Movies per Rotten Tomato Category")
     ax1.grid()
     ax1.set_ylim(0, 40)
-    ax1.set_yaxis("Number of movies")
+    ax1.set_ylabel("Number of movies")
     mpl.xticks(rotation=90)
     mpl.tight_layout()
     # save the figure
@@ -286,13 +290,13 @@ def make_visualizations(file):
     mpl.show()
 
     # plot the box office data (add line)
-    ax2 = fig.add_subplot(111)
-    ax2.bar(bins, bolst, align = 'edge', color ='y-')
+    ax2 = fig.add_subplot(212)
+    ax2.bar(bins, bolst, align = 'edge', color ='y')
     ax2.set_title("Average Boxoffice Price per Rotten Tomatoe Rating Category")
     ax2.set_xlabel("rating category")
     ax2.grid()
     ax2.set_ylim(100000, 453865219)
-    ax1.set_yaxis("box office movie average")
+    ax2.set_ylabel("box office movie average")
     mpl.xticks(rotation=90)
     mpl.tight_layout()
     # save the figure
