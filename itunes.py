@@ -58,19 +58,20 @@ def movie_get(db_filename):
     moviesdict = get_movies_dict(db_filename)
     baseurl= "https://itunes.apple.com/search?term={}&country=US&entity=movie&limit=20"
     movie_list = []
-    for ntitle in titlelst: #TESTING WITH 2 ITEMS
+    for ntitle in titlelst[:20]: #TESTING WITH 1 ITEM AT A TIME
         url = baseurl.format(ntitle)
         itunesr = requests.get(url)
         data = json.loads(itunesr.text)
         mtitle = ntitle.replace('+', ' ')
+        print(mtitle)
         for tup in moviesdict[mtitle]:
             for i in range(len(data['results'])):
-                if re.findall("director ([A-Z]{1}[a-z]* [A-Z]{1}[a-z]*)",data['results'][i]["longDescription"])and tup[1] == data['results'][i]['releaseDate'].split('T'):
+                if re.findall("director ([A-Z]{1}[a-z]* [A-Z]{1}[a-z]*) \w*",data['results'][i]["longDescription"])and tup[1] == data['results'][i]['releaseDate']:
 #(tup[0] in data['results'][i]['artistName'].split(' &') or tup[0] in data['results'][i]['artistName']) 
                     nresults = data['results']
                     movie_list = movie_list + nresults
-            else:
-                count +=1
+                else:
+                    count +=1
         print("{} titles cannot be matched in itunes".format(count))
         
     return movie_list
@@ -88,7 +89,7 @@ def movie_get(db_filename):
 def create_cache(db_filename):
     index = 0
     ituneslst = []
-    while index in range(20): #TESTING IT WITH 2 ITERATIONS!
+    while index in range(5): 
         mvget_lst = movie_get(db_filename)
         ituneslst = mvget_lst + ituneslst
         index = index+1
