@@ -64,6 +64,7 @@ def setUpPopularityTable(results, cur, conn):
             cur.execute("INSERT INTO Popularity (title, release_date, popularity) VALUES (?,?,?)",(title, release_date, pop))
             
     conn.commit()
+    conn.close()
 
 class TestAllMethods(unittest.TestCase):
     # def test_get_api_data_popular(self):
