@@ -40,3 +40,12 @@ Decade, number of movies in decade, percent of total popular movies
 1980s, 2, 1.25
 1960s, 1, 0.62
 
+------
+Average Boxoffice Price per Rating Category
+rating category, number of movies category, average boxoffice
+80-100, 16, 403865219.9375
+60-80, 25, 330217859.64
+40-60, 26, 324738239.9230769
+20-40, 28, 312852610.78571427
+<=20, 0, 0
+
