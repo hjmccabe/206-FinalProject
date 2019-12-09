@@ -5,42 +5,58 @@ import os
 import sqlite3
 import matplotlib.pyplot as plt
 
-def get_api_data_popular():
-    # Get 120 most popular movies from TMDB
+def get_api_data_popular(page):
+    # Get 160 most popular movies from TMDB
     api_key = 'b45e2b59312812bca0659be8b753a532'
     baseurl= "https://api.themoviedb.org/3/movie/popular?api_key={}&language=en-US&page={}"
     popular_list = []
 
     # Each fetch returns 20 movies on a page
-    # This iterates 6 times to return 120 movies
-    for num in range(1,7):
-        popular_url = baseurl.format(api_key, num)
-        r = requests.get(popular_url)
-        data = json.loads(r.text)
-        results = data["results"]
-        popular_list = popular_list + results
-    return popular_list
+    # This iterates 8 times to return 160 movies
+    popular_url = baseurl.format(api_key, page)
+    r = requests.get(popular_url)
+    data = json.loads(r.text)
+    results = data["results"]
+
+    # print(results)
+    # for movie in results:
+    #     popular_list = popular_list.append(movie)
+    return results
 
 def create_cache(pop_results):
-    # Cache was created on 12/4/19 at 9:15 PM
+    # Cache was created on 12/9/19 at 2:45 PM
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     cache_file = dir_path + '/' + "popular_movies.json"
 
     movie_results = {}
-    movie_results['results'] = pop_results
+    key = "Page 1"
+    movie_results[key] = pop_results
 
     with open (cache_file, 'w') as outfile:
         json.dump(movie_results, outfile, indent = 2)
 
-def load_from_cache():
+def add_to_cache(pop_results, page):
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    cache_file = dir_path + '/' + "popular_movies.json"
+    key = "Page " + str(page)
+    with open (cache_file, 'r') as infile:
+        st = infile.read()
+        dic = json.loads(st)
+
+    with open (cache_file, 'w') as outfile:
+        dic[key] = pop_results
+        json.dump(dic, outfile, indent = 2)
+
+def load_from_cache(page):
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     cache_file = dir_path + '/' + "popular_movies.json"
     with open (cache_file, 'r') as infile:
         st = infile.read()
         dic = json.loads(st)
-        results = dic.get("results")
+        key = "Page " + str(page)
+        results = dic.get(key)
     
     return results
 
@@ -66,13 +82,46 @@ def setUpPopularityTable(results, cur, conn):
             
     conn.commit()
 
-def visualization(results):
+    return titles
+
+def updatePopularityTable(results, titles, cur, conn):
+    for movie in results:
+        title = movie.get("title")
+
+        if title not in titles:
+            titles.append(title)
+            release_date = movie.get('release_date')
+            pop = movie.get("popularity")
+            cur.execute("INSERT INTO Popularity (title, release_date, popularity) VALUES (?,?,?)",(title, release_date, pop))
+            
+    conn.commit()
+
+    return titles
+
+def load_all_from_cache():
+    all_results = []
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    cache_file = dir_path + '/' + "popular_movies.json"
+    with open (cache_file, 'r') as infile:
+        st = infile.read()
+        dic = json.loads(st)
+
+    for page in dic.keys():
+        all_results = all_results + dic[page]
+
+    return all_results
+
+
+def visualization(all_results):
+
+
     years = []
     nums = []
 
     year_num_dic = {}
 
-    for movie in results:
+    for movie in all_results:
         release_year = int(movie.get("release_date")[0:4])
         if release_year in year_num_dic.keys():
             year_num_dic[release_year] += 1
@@ -100,31 +149,27 @@ def visualization(results):
     fig.savefig("pop_movies.png")
     plt.show()
 
-class TestAllMethods(unittest.TestCase):
-    # def test_get_api_data_popular(self):
-    #     results_dict = get_api_data_popular()
-    #     self.assertEqual(len(results_dict), 100) # Testing if 100 movies are added
-    #     self.assertFalse(results_dict[0] == results_dict[20]) # Testing if unique pages were returned
-
-    def load_from_cache(self):
-        tmdb_cache = load_from_cache()
-        self.assertEqual(len(tmdb_cache), 120)
-        self.assertEqual(tmdb_cache[0]['title'], "Frozen II")
-
 def main():
     ### Only ran these to get popular movies once
     ### Popular movies are dynamic and change with time
     ### Made one cache so data is consistent
 
-    # results = get_api_data_popular()
-    # create_cache(results)
+    results_1 = get_api_data_popular(1)
+    create_cache(results_1)
 
-    results = load_from_cache()
-    db_name = "movies.db"
+    db_name = "movies_data.db"
     cur, conn = setUpDatabase(db_name)
-    setUpPopularityTable(results, cur, conn)
+    titles = setUpPopularityTable(results_1, cur, conn)
+    
+    for page in range(2,9):
+        results = get_api_data_popular(page)
+        add_to_cache(results, page)
+        cache = load_from_cache(page)
+        titles = updatePopularityTable(cache, titles, cur, conn)
+       
 
-    visualization(results)
+    all_results = load_all_from_cache()
+    visualization(all_results)
     conn.close()
     
 
