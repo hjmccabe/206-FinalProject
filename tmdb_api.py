@@ -3,6 +3,7 @@ import json
 import requests
 import os
 import sqlite3
+import matplotlib.pyplot as plt
 
 def get_api_data_popular():
     # Get 120 most popular movies from TMDB
@@ -65,6 +66,40 @@ def setUpPopularityTable(results, cur, conn):
             
     conn.commit()
 
+def visualization(results):
+    years = []
+    nums = []
+
+    year_num_dic = {}
+
+    for movie in results:
+        release_year = int(movie.get("release_date")[0:4])
+        if release_year in year_num_dic.keys():
+            year_num_dic[release_year] += 1
+        else:
+            year_num_dic[release_year] = 1
+
+    year_num_sorted = sorted(year_num_dic.items(), key = lambda x: x[0])
+
+    for year in year_num_sorted:
+        years.append(year[0])
+        nums.append(year[1])
+        
+    # Create the bar graph
+    fig, ax = plt.subplots()
+    ax.bar(years, nums, color = '#762579')
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Number of Popular Movies")
+    ax.set_title("Number Popular Movies per Year")
+
+
+    # Use these to make sure that your x axis labels fit on the page
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+
+    fig.savefig("pop_movies.png")
+    plt.show()
+
 class TestAllMethods(unittest.TestCase):
     # def test_get_api_data_popular(self):
     #     results_dict = get_api_data_popular()
@@ -89,7 +124,8 @@ def main():
     cur, conn = setUpDatabase(db_name)
     setUpPopularityTable(results, cur, conn)
 
-
+    visualization(results)
+    conn.close()
     
 
 if __name__ == "__main__":
