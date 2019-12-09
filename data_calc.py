@@ -266,23 +266,37 @@ def make_visualizations(file):
     fig = mpl.figure()
 
     ax1 = fig.add_subplot(111)
-    ax1.plot(bins, rtrating, 'g-', label="rating category")
+    width = 0.69
+    ax1.bar(bins, rtrating, width, align = 'edge', color = 'g-')
+    ax1.set_xlabel("rating category")
     ax1.set_title("Number of Movies per Rotten Tomato Category")
     ax1.grid()
     ax1.set_ylim(0, 40)
     ax1.set_yaxis("Number of movies")
+    mpl.xticks(rotation=90)
+    mpl.tight_layout()
     # save the figure
     fig.savefig("omdbhist.png")
     mpl.show()
+
     # plot the box office data (add line)
     ax2 = fig.add_subplot(111)
-    ax2.plot(bins, bolst, 'y-', label="rating category")
+    ax2.bar(bins, bolst, align = 'edge', color ='y-')
     ax2.set_title("Average Boxoffice Price per Rotten Tomatoe Rating Category")
+    ax2.set_xlabel("rating category")
     ax2.grid()
     ax2.set_ylim(100000, 453865219)
     ax1.set_yaxis("box office movie average")
+    mpl.xticks(rotation=90)
+    mpl.tight_layout()
+    # save the figure
     fig.savefig("omdbhist2.png")
     mpl.show()
+
+    # Use these to make sure that your x axis labels fit on the page
+    mpl.xticks(rotation=90)
+    mpl.tight_layout()
+
 
     # mpl.hist(rtrating, bins, histtype='bar', rwidth=0.8)
     # mpl.xticks(rotation=90)
