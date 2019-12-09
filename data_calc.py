@@ -1,6 +1,7 @@
 import json
 import os
 import sqlite3
+import matplotlib.pyplot as mpl
 
 def popularity_by_year(f):
     # Opening cache
@@ -13,6 +14,8 @@ def popularity_by_year(f):
     
     # Getting average popularity
     total_popularity = {}
+    total_movies = len(results)
+
     for movie in results:
         movie_pop = movie["popularity"]
         year = int(movie["release_date"][0:4])
@@ -31,7 +34,7 @@ def popularity_by_year(f):
 
     # Add to text file
     f.write("Average popularity of movies per year\n")
-    f.write("Year, number of movies in year, average popularity\n")
+    f.write("Year, number of movies in year, average popularity, percent of total movies\n")
     for year_data in sorted_average_popularity:
         year = year_data[0]
         num, avg = year_data[1]
@@ -39,9 +42,141 @@ def popularity_by_year(f):
         f.write(entry)
     f.write('\n')
 
+    return sorted_average_popularity
+
+def popularity_bar_graph(data):
+    years = []
+    nums = []
+    score = []
+
+    for entry in data:
+        years.append(entry[0])
+        nums.append(entry[1][0])
+        score.append(entry[1][1])
+
+
+    # Create the bar graph
+    fig, ax1 = mpl.subplots()
+    width = 0.69
+
+    ax1.bar(years, nums, width, align='edge', color = "#00274C")
+    ax1.set_xlabel("Year")
+    ax1.set_ylabel("Number of Popular Movies")
+    ax1.set_title("Number of Popular Movies per Release Year")
+
+    # Use these to make sure that your x axis labels fit on the page
+    mpl.xticks(rotation=90)
+    mpl.tight_layout()
+
+
+    fig.savefig("pop_movies.png")
+    mpl.show()
+
+def popularity_by_decade(data, f):
+    decade_totals = {}
+    total_number = 0
+
+    for year_info in data:
+        total_number += year_info[1][0]
+
+
+    for year_info in data:
+        year = year_info[0]
+        num_in_year = int(year_info[1][0])
+
+        if year >= 2020:
+            number = decade_totals.get("2020s", [0])[0] + num_in_year
+            percentage = float('%.2f' % ((number / total_number) * 100))
+            decade_totals["2020s"] = (number, percentage)
+        elif year == 2019:
+            number = decade_totals.get("2019", [0])[0] + num_in_year
+            percentage = float('%.2f' % ((number / total_number) * 100))
+            decade_totals["2019"] = (number, percentage)
+        elif year >= 2010 and year <= 2018:
+            number = decade_totals.get("2010-2018", [0])[0] + num_in_year
+            percentage = float('%.2f' % ((number / total_number) * 100))
+            decade_totals["2010-2018"] = (number, percentage)
+        elif year >= 2000 and year <= 2009:
+            number = decade_totals.get("2000s", [0])[0] + num_in_year
+            percentage = float('%.2f' % ((number / total_number) * 100))
+            decade_totals["2000s"] = (number, percentage)
+        elif year >= 1990 and year <= 1999:
+            number = decade_totals.get("1990s", [0])[0] + num_in_year
+            percentage = float('%.2f' % ((number / total_number) * 100))
+            decade_totals["1990s"] = (number, percentage)
+        elif year >= 1980 and year <= 1989:
+            number = decade_totals.get("1980s", [0])[0] + num_in_year
+            percentage = float('%.2f' % ((number / total_number) * 100))
+            decade_totals["1980s"] = (number, percentage)
+        elif year >= 1970 and year <= 1979:
+            number = decade_totals.get("1970s", [0])[0] + num_in_year
+            percentage = float('%.2f' % ((number / total_number) * 100))
+            decade_totals["1970s"] = (number, percentage)
+        elif year >= 1960 and year <= 1969:
+            number = decade_totals.get("1960s", [0])[0] + num_in_year
+            percentage = float('%.2f' % ((number / total_number) * 100))
+            decade_totals["1960s"] = (number, percentage)
+
+    # Add to text file
+    f.write("Number and percentage of movies by decade\n")
+    f.write("Decade, number of movies in decade, percent of total popular movies\n")
+
+    for decade in decade_totals.keys():
+        number, percentage = decade_totals[decade]
+        entry = "{}, {}, {}\n".format(decade, number, percentage)
+        f.write(entry)
+
+    f.write("\n")
+
+    print(decade_totals)
+    return decade_totals
+
+def popularity_pie_chart(decade_dict):
+    # Pie chart, where the slices will be ordered and plotted counter-clockwise:
+    # decades = ["2019", "2010-2018", "2000s", "1990s", "1980s", "1970s", "1960s", "2020s"]
+    decades = []
+    percs = []
+    
+    for entry in decade_dict.keys():
+        decades.append(entry)
+        percs.append(decade_dict[entry][1])
+
+    labels = decades
+    sizes = percs
+
+    fig1, ax1 = mpl.subplots()
+    wedges, texts, autotexts = ax1.pie(sizes, labels=None, autopct='%1.2f%%', pctdistance=1, 
+            shadow=False, startangle=90)
+    # patches, texts = mpl.pie(sizes, shadow=True, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+
+
+    legend_info = []
+
+    for i in range(len(decades)):
+        legend_info.append((decades[i], percs[i]))
+
+    ax1.legend(wedges, legend_info,
+          title="Legend",
+          loc="center left",
+          bbox_to_anchor=(1, 0, 0.5, 1))
+    
+    mpl.title("Percentage of popular movies by decade")
+
+    mpl.tight_layout()
+    fig1.savefig("pop_movies_pie.png")
+    mpl.show()
+
 def main():
     with open("calculations.txt", 'w') as f:
-        popularity_by_year(f)
+        sorted_average_popularity = popularity_by_year(f)
+        # popularity_bar_graph(sorted_average_popularity)
+
+        pop_decade = popularity_by_decade(sorted_average_popularity, f)
+        popularity_pie_chart(pop_decade)
+        
+
 
 if __name__ == "__main__":
     main()
