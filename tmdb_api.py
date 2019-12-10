@@ -70,19 +70,38 @@ def setUpPopularityTable(results, cur, conn):
     titles = [] # We don't want any repeat titles
 
     cur.execute("DROP TABLE IF EXISTS Popularity")
-    cur.execute("CREATE TABLE Popularity (title TEXT PRIMARY KEY, release_date DATE, popularity REAL)")
+    cur.execute("CREATE TABLE Popularity (title TEXT PRIMARY KEY, popularity REAL)")
+    for movie in results:
+        title = movie.get("title")
+
+        if title not in titles:
+            titles.append(title)
+            pop = movie.get("popularity")
+            cur.execute("INSERT INTO Popularity (title, popularity) VALUES (?,?)",(title, pop))
+            
+    conn.commit()
+
+    return titles
+
+def setUpReleaseTable(results, cur, conn):
+    titles = [] # We don't want any repeat titles
+    cur.execute("DROP TABLE IF EXISTS ReleaseDates")
+    cur.execute("CREATE TABLE ReleaseDates (title TEXT PRIMARY KEY, year INTEGER, full_date DATE)")
+
     for movie in results:
         title = movie.get("title")
 
         if title not in titles:
             titles.append(title)
             release_date = movie.get('release_date')
-            pop = movie.get("popularity")
-            cur.execute("INSERT INTO Popularity (title, release_date, popularity) VALUES (?,?,?)",(title, release_date, pop))
-            
+            release_year = int(release_date[0:4])
+            cur.execute("INSERT INTO ReleaseDates (title, year, full_date) VALUES (?,?,?)",(title, release_year, release_date))
+
     conn.commit()
 
-    return titles
+
+
+
 
 def updatePopularityTable(results, titles, cur, conn):
     for movie in results:
@@ -154,22 +173,29 @@ def main():
     ### Popular movies are dynamic and change with time
     ### Made one cache so data is consistent
 
-    results_1 = get_api_data_popular(1)
-    create_cache(results_1)
+    # results_1 = get_api_data_popular(1)
+    # create_cache(results_1)
 
-    db_name = "movies_data.db"
-    cur, conn = setUpDatabase(db_name)
-    titles = setUpPopularityTable(results_1, cur, conn)
+    # db_name = "movies.db"
+    # cur, conn = setUpDatabase(db_name)
+    # titles = setUpPopularityTable(results_1, cur, conn)
     
-    for page in range(2,9):
-        results = get_api_data_popular(page)
-        add_to_cache(results, page)
-        cache = load_from_cache(page)
-        titles = updatePopularityTable(cache, titles, cur, conn)
+    # for page in range(2,9):
+    #     results = get_api_data_popular(page)
+    #     add_to_cache(results, page)
+    #     cache = load_from_cache(page)
+    #     titles = updatePopularityTable(cache, titles, cur, conn)
        
 
     all_results = load_all_from_cache()
-    visualization(all_results)
+    db_name = "movies_data.db"
+    cur, conn = setUpDatabase(db_name)
+    titles = setUpPopularityTable(all_results, cur, conn)
+    setUpReleaseTable(all_results, cur, conn)
+
+
+
+    # visualization(all_results)
     conn.close()
     
 
