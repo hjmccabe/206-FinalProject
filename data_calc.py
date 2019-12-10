@@ -294,7 +294,7 @@ def make_visualizations():
     ax2.set_ylabel("box office movie average in millions")
     mpl.tight_layout()
     # save the figure
-    fig.savefig("omdbhist.png")
+    fig.savefig("omdbbar.png")
     
 
     # Use these to make sure that your x axis labels fit on the page
