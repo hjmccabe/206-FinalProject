@@ -83,20 +83,41 @@ def setUpDatabase(db_name):
     cur = conn.cursor()
     return cur, conn
 
-def add_to_database(movie_info, cur, conn):
+def directors_table(movie_info, cur, conn):
     titles = [] # We don't want any repeat titles
 
+    cur.execute("DROP TABLE IF EXISTS Directors")
+    cur.execute("CREATE TABLE Directors (title TEXT PRIMARY KEY, director TEXT)")
 
-    cur.execute("DROP TABLE IF EXISTS OMDB")
-    cur.execute("CREATE TABLE OMDB (title TEXT PRIMARY KEY, box_office INT, director TEXT, rotten_tomatoes INT)")
+    # Movie info: (Title, box office, director, rotten tomatoes)
     for movie in movie_info:
         title = movie[0]
         if title not in titles:
             titles.append(title)
             if None in movie:
                 continue
-            cur.execute("INSERT INTO OMDB (title, box_office, director, rotten_tomatoes) VALUES (?,?,?,?)",(movie[0], movie[1], movie[2], movie[3]))
-            conn.commit()
+            cur.execute("INSERT INTO Directors (title, director) VALUES (?,?)", (movie[0], movie[2]))
+    conn.commit()
+
+def bort_table(movie_info, cur, conn):
+    # Excuse me, my son is also named 'Bort'
+    # We need more Bort license plates in the Gift Shop. Repeat, we are sold out of Bort license plates.
+
+    titles = [] # We don't want any repeat titles
+
+    cur.execute("DROP TABLE IF EXISTS Ratings_and_Box")
+    cur.execute("CREATE TABLE Ratings_and_Box (title TEXT PRIMARY KEY, box_office INT, rotten_tomatoes INT)")
+
+    # Movie info: (Title, box office, director, rotten tomatoes)
+    for movie in movie_info:
+        title = movie[0]
+        if title not in titles:
+            titles.append(title)
+            if None in movie:
+                continue
+            cur.execute("INSERT INTO Ratings_and_Box  (title, box_office, rotten_tomatoes) VALUES (?,?,?)",(movie[0], movie[1], movie[3]))
+    conn.commit()
+
 # def boxoffice_by_rating(f):
 #     # Opening cache
 #     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -200,41 +221,19 @@ def add_to_database(movie_info, cur, conn):
 #     plt.legend()
 #     plt.show()
 
-    
-'''
-def create_cache():
-    # Cache was created on 12/4/19 at 11:58 PM
-    index = 0
-    while index in range(5):
-        title_list, bor_list = get_api_data_all()
-        index = index+1
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    cache_file = dir_path + '/' + "boratings.json"
-    movie_results = {}
-    n_dict = {}
-    for i in range(len(title_list)):
-        n_dict[title_list[i]] = title_list[1]
-        movie_results['title'] =  n_dict[title_list[i]]
-        n_dict[bor_list[i]] = bor_list[i]
-        movie_results['boxoffice'] = bor_list[i] #it made a file before but now added box office as a separate category, now not working
-#REDO THE PART ABOVE!!!!!
-    with open (cache_file, 'w') as outfile:
-        json.dump(movie_results, outfile, indent = 2)
-'''
 
-# class TestAllMethods(unittest.TestCase):
-#     def test_get_api_data_all(self):
-#         results_dict = get_api_data()
-#         self.assertEqual(len(results_dict), 100) # Testing if 100 movies are added
-#         self.assertFalse(results_dict[0] == results_dict[20]) # Testing if unique pages were returned
 
 def main():
     # movie_info = get_api_data_all()
     # make_cache(movie_info)
 
     movie_info_cache = open_cache()
-    cur, conn = setUpDatabase("movies.db")
-    add_to_database(movie_info_cache, cur, conn)
+    cur, conn = setUpDatabase("movies_data.db")
+    directors_table(movie_info_cache, cur, conn)
+    bort_table(movie_info_cache, cur, conn)
+
+    conn.close()
+
     # with open("omdb-calculations.txt", 'w') as f:
     #     boxoffice_by_rating(f)
     #     make_visualizations(f)

@@ -3,7 +3,6 @@ import os
 import sqlite3
 import matplotlib
 import matplotlib.pyplot as mpl
-import numpy as np
 
 
 def popularity_by_year(f):
@@ -273,8 +272,6 @@ def make_visualizations():
     #count+=20
     #bins.append(count)
 
-    print(bins)
-    print(rtrating)
     # get the figure
     fig = mpl.figure()
     ax1 = fig.add_subplot(211)
