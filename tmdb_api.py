@@ -175,10 +175,6 @@ def main():
 
     # results_1 = get_api_data_popular(1)
     # create_cache(results_1)
-
-    # db_name = "movies.db"
-    # cur, conn = setUpDatabase(db_name)
-    # titles = setUpPopularityTable(results_1, cur, conn)
     
     # for page in range(2,9):
     #     results = get_api_data_popular(page)
@@ -187,15 +183,16 @@ def main():
     #     titles = updatePopularityTable(cache, titles, cur, conn)
        
 
+    ### Running from the cache
     all_results = load_all_from_cache()
     db_name = "movies_data.db"
     cur, conn = setUpDatabase(db_name)
     titles = setUpPopularityTable(all_results, cur, conn)
     setUpReleaseTable(all_results, cur, conn)
 
+    ## Visualizations
 
-
-    # visualization(all_results)
+    visualization(all_results)
     conn.close()
     
 
