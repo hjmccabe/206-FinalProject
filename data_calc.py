@@ -1,7 +1,10 @@
 import json
 import os
 import sqlite3
+import matplotlib
 import matplotlib.pyplot as mpl
+import numpy as np
+
 
 def popularity_by_year(f):
     
@@ -230,27 +233,27 @@ def boxoffice_by_rating(f):
     f.write("------\n")
     f.write("Average Boxoffice Price per Rating Category\n")
     f.write("rating category, number of movies category, average boxoffice\n")
-    entry1 = "80-100, {}, {}\n".format(str(count80), str(avg80))
-    f.write(entry1)
-    entry2 = "60-80, {}, {}\n".format(str(count60),str(avg60)) 
-    f.write(entry2)
-    entry3 = "40-60, {}, {}\n".format(str(count40), str(avg40))
-    f.write(entry3)
-    entry4 = "20-40, {}, {}\n".format(str(count20), str(avg20))
-    f.write(entry4)
     if sucksavg !=0:
-        entry5 = "<=20, {}, {}\n".format(str(mvsucks), str(sucksavg))
-        f.write(entry5)
+        entry1 = "<=20, {}, {}\n".format(str(mvsucks), str(sucksavg))
+        f.write(entry1)
     else:
-        entry5 = "<=20, 0, 0\n".format(str(mvsucks), str(sucksavg))
-        f.write(entry5)
+        entry1 = "<=20, 0, 0\n".format(str(mvsucks), str(sucksavg))
+        f.write(entry1)
+    entry2 = ">20-40, {}, {}\n".format(str(count20), str(avg20))
+    f.write(entry2)
+    entry3 = ">40-60, {}, {}\n".format(str(count40), str(avg40))
+    f.write(entry3)
+    entry4 = ">60-80, {}, {}\n".format(str(count60),str(avg60)) 
+    f.write(entry4)
+    entry5 = ">80-100, {}, {}\n".format(str(count80), str(avg80))
+    f.write(entry5)
+
     f.write('\n')
 
 def make_visualizations():
     rtrating = []
     bins = []
     bolst = []
-    count = 100
     dir_path = os.path.dirname(os.path.realpath(__file__))
     file_ = dir_path + '/' + "calculations.txt"
     with open (file_, 'r') as infile:
@@ -260,9 +263,8 @@ def make_visualizations():
     for line in something[1:]:
         if line != '\n': 
             line = line.strip('\n')
-            bins.append(count)
-            count-=20
             l = line.split(',')
+            bins.append(l[0])
             rtrating.append(int(l[1].strip(' ')))
             if l[0] != '<=20':
                 bolst.append(float(l[-1])//1000000)
@@ -273,18 +275,16 @@ def make_visualizations():
 
     print(bins)
     print(rtrating)
-
     # get the figure
     fig = mpl.figure()
-
     ax1 = fig.add_subplot(211)
     width = 0.69
     ax1.bar(bins, rtrating, width, align = 'edge', color = 'g')
     ax1.set_xlabel("rating category")
     ax1.set_title("Number of Movies per Rotten Tomato Category")
+    ax1.set_xticklabels(bins)
     ax1.grid()
     ax1.set_ylabel("Number of movies")
-    mpl.xticks(rotation=90)
     mpl.tight_layout()
     # save the figure
 
@@ -295,15 +295,15 @@ def make_visualizations():
     ax2.set_xlabel("rating category")
     ax2.grid()
     ax2.set_ylabel("box office movie average in millions")
-    mpl.xticks(rotation=90)
     mpl.tight_layout()
     # save the figure
     fig.savefig("omdbhist.png")
-    mpl.show()
+    
 
     # Use these to make sure that your x axis labels fit on the page
-    mpl.xticks(rotation=90)
     mpl.tight_layout()
+    mpl.show()    
+
 
 
     # mpl.hist(rtrating, bins, histtype='bar', rwidth=0.8)
