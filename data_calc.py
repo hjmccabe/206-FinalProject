@@ -325,7 +325,7 @@ def make_visualizations():
 
     # plot the box office data (add line)
     ax2 = fig.add_subplot(212)
-    ax2.bar(bins, bolst, align = 'edge', color ='y')
+    ax2.bar(bins, bolst, align = 'edge', color ='m')
     ax2.set_title("Average Boxoffice Revenue per Rotten Tomatoes Rating Category")
     ax2.set_xlabel("rating category")
     ax2.grid()
