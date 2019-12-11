@@ -228,7 +228,7 @@ def boxoffice_by_rating(f):
 
     # Add to text file
     f.write("------\n")
-    f.write("Average Boxoffice Price per Rating Category\n")
+    f.write("Average Boxoffice Revenue per Rating Category\n")
     f.write("rating category, number of movies category, average boxoffice\n")
     if sucksavg !=0:
         entry1 = "<=20, {}, {}\n".format(str(mvsucks), str(sucksavg))
@@ -326,7 +326,7 @@ def make_visualizations():
     # plot the box office data (add line)
     ax2 = fig.add_subplot(212)
     ax2.bar(bins, bolst, align = 'edge', color ='y')
-    ax2.set_title("Average Boxoffice Price per Rotten Tomatoes Rating Category")
+    ax2.set_title("Average Boxoffice Revenue per Rotten Tomatoes Rating Category")
     ax2.set_xlabel("rating category")
     ax2.grid()
     ax2.set_ylabel("box office movie average in millions")
