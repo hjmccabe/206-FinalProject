@@ -249,6 +249,10 @@ def boxoffice_by_rating(f):
 
     f.write('\n')
 
+def multiple_directors(f):
+    pass
+
+
 def make_visualizations():
     rtrating = []
     bins = []
@@ -278,7 +282,7 @@ def make_visualizations():
     width = 0.69
     ax1.bar(bins, rtrating, width, align = 'edge', color = 'g')
     ax1.set_xlabel("rating category")
-    ax1.set_title("Number of Movies per Rotten Tomato Category")
+    ax1.set_title("Number of Movies per Rotten Tomatoes Category")
     ax1.set_xticklabels(bins)
     ax1.grid()
     ax1.set_ylabel("Number of movies")
@@ -288,7 +292,7 @@ def make_visualizations():
     # plot the box office data (add line)
     ax2 = fig.add_subplot(212)
     ax2.bar(bins, bolst, align = 'edge', color ='y')
-    ax2.set_title("Average Boxoffice Price per Rotten Tomatoe Rating Category")
+    ax2.set_title("Average Boxoffice Price per Rotten Tomatoes Rating Category")
     ax2.set_xlabel("rating category")
     ax2.grid()
     ax2.set_ylabel("box office movie average in millions")
