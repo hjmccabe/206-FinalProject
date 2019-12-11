@@ -135,8 +135,6 @@ def popularity_by_decade(data, f):
         f.write(entry)
 
     f.write("\n")
-
-    print(decade_totals)
     return decade_totals
 
 def popularity_pie_chart(decade_dict):
@@ -249,8 +247,46 @@ def boxoffice_by_rating(f):
 
     f.write('\n')
 
-def multiple_directors(f):
-    pass
+def multiple_directors(file2):
+    conn = sqlite3.connect(file2)
+    cur = conn.cursor()
+    cur.execute('''SELECT ReleaseDates.year, Directors.title, Directors.director
+    FROM ReleaseDates
+    LEFT JOIN Directors
+    ON Directors.title = ReleaseDates.title;''')
+    dirlst_mult = []
+    tot = 0
+    for var in list(cur):
+        if var[-1] != None:
+            tot+=1
+            if int(var[0]) == 2019:
+                    x = var[-1].split(',')
+                    if len(x)> 1:
+                        dirlst_mult.append(x)
+    count_multdir = len(dirlst_mult)
+    year = 2019
+    average = count_multdir/tot 
+    perc = round(average*100, 1)
+    conn.close()
+    return [year, tot, count_multdir, average, perc] #YEAR, TOTAL, COUNT MULTIPLE DIR, AVERAGE, PERC
+
+def calculations_multdirectors(file2, f):
+    # dir_path = os.path.dirname(os.path.realpath(__file__))
+    # f = dir_path + '/' + "calculations.txt"
+    multdir = multiple_directors(file2)
+    year = multdir[0]
+    tot = multdir[1]
+    count_multdir = multdir[2]
+    average = multdir[3]
+    perc = multdir[4]
+    entry = '{}, {}, {}, {}, {}'.format(year, tot, count_multdir, average, perc)
+    # with open(f, 'w') as outfile:
+    f.write('\n------\n')
+    f.write('Percent of Movies with Multiple Directors in 2019\n')
+    f.write('year, total, frequency of multiple directors, average, percent\n')
+    f.write(entry)
+    f.write('\n')
+
 
 
 def make_visualizations():
@@ -261,8 +297,6 @@ def make_visualizations():
     file_ = dir_path + '/' + "calculations.txt"
     with open (file_, 'r') as infile:
         something = infile.readlines()[46:53]
-
-    print(something)
     for line in something[1:]:
         if line != '\n': 
             line = line.strip('\n')
@@ -307,21 +341,10 @@ def make_visualizations():
 
 
 
-    # mpl.hist(rtrating, bins, histtype='bar', rwidth=0.8)
-    # mpl.xticks(rotation=90)
-    # mpl.tight_layout()
-    # mpl.title("Average Boxoffice Price per Rating Category")
-    # mpl.xlabel("rating category")
-    # mpl.ylabel("number of movies category")
-    # fig, ax = mpl.subplots()
-    # fig.savefig("omdbhist.png")
-    # mpl.show()
-    # mpl.legend()
-
-
 def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     file_ = dir_path + '/' + "calculations.txt"
+    file2 = dir_path + '/' + "movies_data.db"
     with open(file_, 'w') as f:
         
         sorted_average_popularity = popularity_by_year(f)
@@ -331,7 +354,9 @@ def main():
         popularity_pie_chart(pop_decade)
 
         boxoffice_by_rating(f)
+        calculations_multdirectors(file2,f)
     make_visualizations()
+   
 
 
 if __name__ == "__main__":
