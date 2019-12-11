@@ -51,3 +51,8 @@ rating category, number of movies category, average boxoffice
 >60-80, 25, 330217859.64
 >80-100, 16, 403865219.9375
 
+
+------
+Percent of Movies with Multiple Directors in 2019
+year, total, frequency of multiple directors, average, percent
+2019, 79, 9, 0.11392405063291139, 11.4
