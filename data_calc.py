@@ -218,7 +218,7 @@ def boxoffice_by_rating(f):
                 bo20+=boxoffice
             else:
                 mvsucks+=1
-                bomvsucks+=1
+                bomvsucks+=boxoffice
     if count80 !=0:
         avg80 = bo80/count80
     
