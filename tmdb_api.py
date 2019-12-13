@@ -1,15 +1,12 @@
-import unittest
 import json
 import requests
 import os
 import sqlite3
-import matplotlib.pyplot as plt
 
 def get_api_data_popular(page):
     # Get 160 most popular movies from TMDB
     api_key = 'b45e2b59312812bca0659be8b753a532'
     baseurl= "https://api.themoviedb.org/3/movie/popular?api_key={}&language=en-US&page={}"
-    popular_list = []
 
     # Each fetch returns 20 movies on a page
     # This iterates 8 times to return 160 movies
@@ -17,14 +14,9 @@ def get_api_data_popular(page):
     r = requests.get(popular_url)
     data = json.loads(r.text)
     results = data["results"]
-
-    # print(results)
-    # for movie in results:
-    #     popular_list = popular_list.append(movie)
     return results
 
 def create_cache(pop_results):
-    # Cache was created on 12/9/19 at 2:45 PM
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     cache_file = dir_path + '/' + "popular_movies.json"
@@ -99,10 +91,6 @@ def setUpReleaseTable(results, cur, conn):
 
     conn.commit()
 
-
-
-
-
 def updatePopularityTable(results, titles, cur, conn):
     for movie in results:
         title = movie.get("title")
@@ -132,64 +120,34 @@ def load_all_from_cache():
     return all_results
 
 
-def visualization(all_results):
-
-
-    years = []
-    nums = []
-
-    year_num_dic = {}
-
-    for movie in all_results:
-        release_year = int(movie.get("release_date")[0:4])
-        if release_year in year_num_dic.keys():
-            year_num_dic[release_year] += 1
-        else:
-            year_num_dic[release_year] = 1
-
-    year_num_sorted = sorted(year_num_dic.items(), key = lambda x: x[0])
-
-    for year in year_num_sorted:
-        years.append(year[0])
-        nums.append(year[1])
-        
-    # Create the bar graph
-    fig, ax = plt.subplots()
-    ax.bar(years, nums, color = '#762579')
-    ax.set_xlabel("Year")
-    ax.set_ylabel("Number of Popular Movies")
-    ax.set_title("Number Popular Movies per Year")
-
-
-    # Use these to make sure that your x axis labels fit on the page
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-
-    fig.savefig("pop_movies.png")
-    plt.show()
-
 def main():
-    ### Only ran these to get popular movies once
-    ### Popular movies are dynamic and change with time
-    ### Made one cache so data is consistent
-
-
     ## Input to see if user wants to get from API or cache
     api_input = input("Do you want to run from the API? (y/n)").lower()
     run_api = False
-    run_cache = False
     cache_input = input("Do you want to run from the cache? (y/n)").lower()
 
     # API input
     while True:
         api_input = input("Do you want to run from the API? (y/n)").lower()
+
         if api_input == 'y' or api_input == 'yes':
-            # Api stuff
+            results_1 = get_api_data_popular(1)
+            create_cache(results_1)
+            db_name = "movies_data.db"
+            cur, conn = setUpDatabase(db_name)
+            
+            for page in range(2,9):
+                results = get_api_data_popular(page)
+                add_to_cache(results, page)
+                cache = load_from_cache(page)
+                titles = updatePopularityTable(cache, titles, cur, conn)
             run_api = True
+            conn.close()
             break
 
         elif api_input == 'n' or api_input == 'no':
             break
+
         else:
             print("Please enter a valid input")
 
@@ -198,8 +156,12 @@ def main():
         while True:
             cache_input = input("Do you want to run from the Cache? (y/n)").lower()
             if cache_input == 'y' or cache_input == 'yes':
-                # Cache stuff
-                run_cache == True
+                all_results = load_all_from_cache()
+                db_name = "movies_data.db"
+                cur, conn = setUpDatabase(db_name)
+                titles = setUpPopularityTable(all_results, cur, conn)
+                setUpReleaseTable(all_results, cur, conn)
+                conn.close()
                 break
 
             elif api_input == 'n' or api_input == 'no':
@@ -208,35 +170,5 @@ def main():
                 print("Please enter a valid input")
 
 
-    
-
-    
-
-            
-
-    # results_1 = get_api_data_popular(1)
-    # create_cache(results_1)
-    
-    # for page in range(2,9):
-    #     results = get_api_data_popular(page)
-    #     add_to_cache(results, page)
-    #     cache = load_from_cache(page)
-    #     titles = updatePopularityTable(cache, titles, cur, conn)
-       
-
-    ### Running from the cache
-    all_results = load_all_from_cache()
-    db_name = "movies_data.db"
-    cur, conn = setUpDatabase(db_name)
-    titles = setUpPopularityTable(all_results, cur, conn)
-    setUpReleaseTable(all_results, cur, conn)
-
-    ## Visualizations
-
-    visualization(all_results)
-    conn.close()
-    
-
 if __name__ == "__main__":
     main()
-    unittest.main(verbosity = 2)
