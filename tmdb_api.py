@@ -115,26 +115,9 @@ def updateReleaseTable(results, titles, cur, conn):
 
     conn.commit()
 
-def load_all_from_cache():
-    all_results = []
-
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    cache_file = dir_path + '/' + "popular_movies.json"
-    with open (cache_file, 'r') as infile:
-        st = infile.read()
-        dic = json.loads(st)
-
-    for page in dic.keys():
-        all_results = all_results + dic[page]
-
-    return all_results
-
-
 def main():
     ## Input to see if user wants to get from API or cache
-    api_input = input("Do you want to run from the API? (y/n)").lower()
     run_api = False
-    cache_input = input("Do you want to run from the cache? (y/n)").lower()
 
     # API input
     while True:
@@ -145,17 +128,16 @@ def main():
             create_cache(results_1)
             db_name = "movies_data.db"
             cur, conn = setUpDatabase(db_name)
-            setUpPopularityTable(results_1, cur, conn)
+            titles = setUpPopularityTable(results_1, cur, conn)
             setUpReleaseTable(results_1, cur, conn)
             
             for page in range(2,9):
                 results = get_api_data_popular(page)
                 add_to_cache(results, page)
-                cache = load_from_cache(page)
-                titles = updatePopularityTable(cache, titles, cur, conn)
+                titles = updatePopularityTable(results, titles, cur, conn)
                 updateReleaseTable(results, titles, cur, conn)
             run_api = True
-            conn.close()
+
             break
 
         elif api_input == 'n' or api_input == 'no':
@@ -164,16 +146,22 @@ def main():
         else:
             print("Please enter a valid input")
 
-    # Cache input
-    if run_api == True:
+    # Cache input 2
+    if run_api == False:
         while True:
             cache_input = input("Do you want to run from the Cache? (y/n)").lower()
             if cache_input == 'y' or cache_input == 'yes':
-                all_results = load_all_from_cache()
+                results_1 = load_from_cache(1)
                 db_name = "movies_data.db"
                 cur, conn = setUpDatabase(db_name)
-                titles = setUpPopularityTable(all_results, cur, conn)
-                setUpReleaseTable(all_results, cur, conn)
+                titles = setUpPopularityTable(results_1, cur, conn)
+                setUpReleaseTable(results_1, cur, conn)
+
+                for page in range(2,9):
+                    results = load_from_cache(page)
+                    titles = updatePopularityTable(results, titles, cur, conn)
+                    updateReleaseTable(results, titles, cur, conn)
+
                 conn.close()
                 break
 
@@ -181,6 +169,9 @@ def main():
                 break
             else:
                 print("Please enter a valid input")
+
+    else:
+        conn.close()
 
 
 if __name__ == "__main__":
