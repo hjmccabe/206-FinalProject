@@ -97,13 +97,23 @@ def updatePopularityTable(results, titles, cur, conn):
 
         if title not in titles:
             titles.append(title)
-            release_date = movie.get('release_date')
             pop = movie.get("popularity")
-            cur.execute("INSERT INTO Popularity (title, release_date, popularity) VALUES (?,?,?)",(title, release_date, pop))
+            cur.execute("INSERT INTO Popularity (title, popularity) VALUES (?,?)",(title, pop))
             
     conn.commit()
 
     return titles
+
+def updateReleaseTable(results, titles, cur, conn):
+    for movie in results:
+        title = movie.get("title")
+        if title not in titles:
+            titles.append(title)
+            release_date = movie.get('release_date')
+            release_year = int(release_date[0:4])
+            cur.execute("INSERT INTO ReleaseDates (title, year, full_date) VALUES (?,?,?)",(title, release_year, release_date))
+
+    conn.commit()
 
 def load_all_from_cache():
     all_results = []
@@ -135,12 +145,15 @@ def main():
             create_cache(results_1)
             db_name = "movies_data.db"
             cur, conn = setUpDatabase(db_name)
+            setUpPopularityTable(results_1, cur, conn)
+            setUpReleaseTable(results_1, cur, conn)
             
             for page in range(2,9):
                 results = get_api_data_popular(page)
                 add_to_cache(results, page)
                 cache = load_from_cache(page)
                 titles = updatePopularityTable(cache, titles, cur, conn)
+                updateReleaseTable(results, titles, cur, conn)
             run_api = True
             conn.close()
             break
