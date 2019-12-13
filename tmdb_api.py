@@ -173,6 +173,47 @@ def main():
     ### Popular movies are dynamic and change with time
     ### Made one cache so data is consistent
 
+
+    ## Input to see if user wants to get from API or cache
+    api_input = input("Do you want to run from the API? (y/n)").lower()
+    run_api = False
+    run_cache = False
+    cache_input = input("Do you want to run from the cache? (y/n)").lower()
+
+    # API input
+    while True:
+        api_input = input("Do you want to run from the API? (y/n)").lower()
+        if api_input == 'y' or api_input == 'yes':
+            # Api stuff
+            run_api = True
+            break
+
+        elif api_input == 'n' or api_input == 'no':
+            break
+        else:
+            print("Please enter a valid input")
+
+    # Cache input
+    if run_api == True:
+        while True:
+            cache_input = input("Do you want to run from the Cache? (y/n)").lower()
+            if cache_input == 'y' or cache_input == 'yes':
+                # Cache stuff
+                run_cache == True
+                break
+
+            elif api_input == 'n' or api_input == 'no':
+                break
+            else:
+                print("Please enter a valid input")
+
+
+    
+
+    
+
+            
+
     # results_1 = get_api_data_popular(1)
     # create_cache(results_1)
     
