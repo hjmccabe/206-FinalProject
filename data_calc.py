@@ -219,10 +219,18 @@ def boxoffice_by_rating(f):
             else:
                 mvsucks+=1
                 bomvsucks+=1
-    avg80 = bo80/count80
-    avg60 = bo60/count60
-    avg40 = bo40/count40
-    avg20 = bo20/count20
+    if count80 !=0:
+        avg80 = bo80/count80
+    
+    if count60 !=0:
+        avg60 = bo60/count60
+    
+    if count40 != 0:
+        avg40 = bo40/count40
+    
+    if count20 !=0:
+        avg20 = bo20/count20
+    
     if mvsucks !=0:
         sucksavg = bomvsucks/mvsucks
 
