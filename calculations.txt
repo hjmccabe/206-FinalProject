@@ -1,5 +1,5 @@
 Average popularity of movies per year
-Year, number of movies in year, average popularity, percent of total movies
+Year, number of movies in year, average popularity
 2019, 72, 70.49954166666666
 2018, 15, 41.22553333333334
 2014, 13, 39.46369230769231
@@ -46,13 +46,13 @@ Decade, number of movies in decade, percent of total popular movies
 Average Boxoffice Revenue per Rating Category
 rating category, number of movies category, average boxoffice
 <=20, 0, 0
->20-40, 28, 312852610.78571427
->40-60, 26, 324738239.9230769
->60-80, 25, 330217859.64
->80-100, 16, 403865219.9375
+>20-40, 50, 250726148.5
+>40-60, 48, 254867915.54166666
+>60-80, 42, 273046901.21428573
+>80-100, 29, 303262771.79310346
 
 
 ------
 Percent of Movies with Multiple Directors in 2019
 year, total, frequency of multiple directors, average, percent
-2019, 79, 9, 0.11392405063291139, 11.4
+2019, 146, 11, 0.07534246575342465, 7.5
