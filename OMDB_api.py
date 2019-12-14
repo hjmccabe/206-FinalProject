@@ -115,7 +115,7 @@ def main():
     quit_source = source == 'quit'
 
     while((api_source == False) and (cache_source == False) and (quit_source == False)):
-        source = input("Please type either type 'cache', 'api', or 'quit')").lower()
+        source = input("Please type either type 'cache', 'api', or 'quit' (without the quotes)").lower()
         api_source = source == "api"
         cache_source = source == "cache"
         quit_source = source == 'quit'
