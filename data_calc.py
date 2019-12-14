@@ -42,7 +42,7 @@ def popularity_by_year(f):
 
     # Add to text file
     f.write("Average popularity of movies per year\n")
-    f.write("Year, number of movies in year, average popularity, percent of total movies\n")
+    f.write("Year, number of movies in year, average popularity\n")
     for year_data in sorted_average_popularity:
         year = year_data[0]
         num, avg = year_data[1]
@@ -266,8 +266,8 @@ def multiple_directors(file2):
     tot = 0
     for var in list(cur):
         if var[-1] != None:
-            tot+=1
             if int(var[0]) == 2019:
+                    tot+=1
                     x = var[-1].split(',')
                     if len(x)> 1:
                         dirlst_mult.append(x)
