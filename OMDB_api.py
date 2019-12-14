@@ -120,13 +120,17 @@ def main():
         cache_source = source == "cache"
         quit_source = source == 'quit'
 
-    if cache_source == True:
-        movie_info_list = open_cache()
-        for film in movie_info_list:
-            directors_table(film, cur, conn)
-            bort_table(film, cur, conn)
+    try:
+        if cache_source == True:
+            movie_info_list = open_cache()
+            for film in movie_info_list:
+                directors_table(film, cur, conn)
+                bort_table(film, cur, conn)
 
-        conn.close()
+            conn.close()
+    except:
+        print("Running from API since there is error with caching")
+        api_source = True
 
     if api_source == True:
         for film in titles:
