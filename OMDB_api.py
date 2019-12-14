@@ -129,7 +129,7 @@ def main():
 
             conn.close()
     except:
-        print("Running from API since there is error with caching")
+        print("Please run from API since there is error with caching")
         api_source = True
 
     if api_source == True:
