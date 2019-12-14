@@ -236,7 +236,7 @@ def boxoffice_by_rating(f):
 
     # Add to text file
     f.write("------\n")
-    f.write("Average Boxoffice Revenue per Rating Category\n")
+    f.write("Average Boxoffice Revenue and Frequency per Rating Category\n")
     f.write("rating category, number of movies category, average boxoffice\n")
     if sucksavg !=0:
         entry1 = "<=20, {}, {}\n".format(str(mvsucks), str(sucksavg))
