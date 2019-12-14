@@ -121,7 +121,7 @@ def main():
 
     # API input
     while True:
-        api_input = input("Do you want to run from the API? (y/n)").lower()
+        api_input = input("Do you want to run from the API? (y/n). Must run from the API if there is no cache file").lower()
 
         if api_input == 'y' or api_input == 'yes':
             results_1 = get_api_data_popular(1)
